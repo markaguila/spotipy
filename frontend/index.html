@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -16,18 +15,27 @@
 
     <section class="toggle" role="tablist" aria-label="Choose analysis">
       <h2 id="panel-title" class="muted">Choose an analysis</h2>
-      <p id="panel-desc" class="placeholder">Click one of the buttons above to show <em>ALBUM ANALYSIS</em> or <em>ARTIST ANALYSIS</em> here.</p>
+      <p id="panel-desc" class="placeholder">
+        Click one of the buttons above to show <em>ALBUM ANALYSIS</em> or <em>ARTIST ANALYSIS</em> here.
+      </p>
       <button id="albumBtn" class="btn" role="tab" aria-selected="false" aria-controls="panel" data-view="albums">Analyze Albums</button>
       <button id="artistBtn" class="btn" role="tab" aria-selected="false" aria-controls="panel" data-view="artists">Analyze Artists</button>
     </section>
 
     <section id="panel" class="panel" role="tabpanel" aria-live="polite">
+      <div id="sort-options" class="sort-options" hidden>
+        <label><strong>Sort by:</strong></label>
+        <label><input type="radio" name="sort" value="total" checked /> Total</label>
+        <label><input type="radio" name="sort" value="percent" /> Percentage</label>
+      </div>
+
       <div id="range-buttons" class="range-buttons" hidden>
         <button class="range-btn" data-range="5">Top 5</button>
         <button class="range-btn" data-range="10">Top 10</button>
         <button class="range-btn" data-range="100">Top 100</button>
         <button class="range-btn" data-range="all">All</button>
       </div>
+
       <div id="results" class="results" hidden></div>
     </section>
 

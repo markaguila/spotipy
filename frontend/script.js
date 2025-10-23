@@ -1,130 +1,95 @@
-// --- State ---
-const state = {
-  view: null // "albums" or "artists"
-};
-
-// --- Element references ---
 const albumBtn = document.getElementById("albumBtn");
 const artistBtn = document.getElementById("artistBtn");
-const panel = document.getElementById("panel");
 const rangeButtons = document.getElementById("range-buttons");
+const sortOptions = document.getElementById("sort-options");
 const resultsDiv = document.getElementById("results");
 
-// --- View selection ---
+let currentView = null;
+let currentUser = "badbunny"; // test user
+let currentSort = "total";
+
 albumBtn.addEventListener("click", () => {
-  state.view = "albums";
-  renderAnalysisView();
+  currentView = "albums";
+  rangeButtons.hidden = false;
+  sortOptions.hidden = false;
+  resultsDiv.hidden = true;
 });
 
 artistBtn.addEventListener("click", () => {
-  state.view = "artists";
-  renderAnalysisView();
+  currentView = "artists";
+  rangeButtons.hidden = false;
+  sortOptions.hidden = false;
+  resultsDiv.hidden = true;
 });
 
-// --- Render analysis view ---
-function renderAnalysisView() {
-  // Show the panel area
-  panel.removeAttribute("hidden");
+document.querySelectorAll('input[name="sort"]').forEach((radio) => {
+  radio.addEventListener("change", (e) => {
+    currentSort = e.target.value;
+    console.log("Sort changed to:", currentSort);
+  });
+});
 
-  // Update heading
-  panel.querySelector(".results").innerHTML = "";
-  rangeButtons.hidden = false;
+document.querySelectorAll(".range-btn").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const limit = btn.dataset.range === "all" ? 9999 : btn.dataset.range;
+    const url = `http://localhost:5000/api/stats?view=${currentView}&limit=${limit}&user=${currentUser}&sort=${currentSort}`;
+    console.log("Fetching:", url);
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      renderResults(data, currentView);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      resultsDiv.innerHTML = `<p>Error loading data. Check console for details.</p>`;
+      resultsDiv.hidden = false;
+    }
+  });
+});
+
+function renderResults(data, view) {
   resultsDiv.hidden = false;
 
-  // Set ARIA labels for accessibility
-  albumBtn.setAttribute("aria-selected", state.view === "albums");
-  artistBtn.setAttribute("aria-selected", state.view === "artists");
-
-  // Update the panel title text visually
-  document.getElementById("panel-title").textContent =
-    state.view === "albums" ? "Album Analysis" : "Artist Analysis";
-}
-
-// --- Handle range button clicks ---
-rangeButtons.addEventListener("click", (e) => {
-  if (!e.target.classList.contains("range-btn")) return;
-  let limit = e.target.dataset.range;
-  if (limit === "all") limit = 1000;
-  fetchAndRenderData(state.view, limit);
-});
-
-
-// --- Fetch data from backend ---
-function fetchAndRenderData(view, limit) {
-  resultsDiv.innerHTML = "<p>Loading data...</p>";
-
-  // Use full backend URL if serving frontend on a different port
-  fetch(`http://localhost:5000/api/stats?view=${view}&limit=${limit}`)
-    .then((response) => {
-      if (!response.ok) throw new Error("Failed to fetch data");
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Fetched data:", data);
-
-      renderResults(view, data);
-    })
-    .catch((err) => {
-      console.error("Error fetching data:", err);
-      resultsDiv.innerHTML = "<p>Error loading data. Check console for details.</p>";
-    });
-}
-
-function renderResults(view, data) {
-  const resultsDiv = document.getElementById("results");
-
-  // Make sure it's visible
-  resultsDiv.removeAttribute("hidden");
-  resultsDiv.style.display = "block";
-
-  // Safety check
   if (!data || data.length === 0) {
-    resultsDiv.innerHTML = "<p>No data available.</p>";
+    resultsDiv.innerHTML = `<p>No data found for this user/view.</p>`;
     return;
   }
 
-  console.log("Rendering", data.length, "rows for", view);
+  let html = `<table border="1" cellspacing="0" cellpadding="6" style="width:100%;border-collapse:collapse;">
+      <thead style="background:#f0f0f0;">
+        <tr>`;
 
-  // Define table headers
-  const headers =
-    view === "albums"
-      ? "<th>#</th><th>Album</th><th>Artist</th><th>Total Tracks</th>"
-      : "<th>#</th><th>Artist</th><th>Total Tracks</th>";
+  if (view === "albums") {
+    html += `<th>#</th><th>Album</th><th>Artist</th><th>Liked</th><th>Total</th><th>%</th>`;
+  } else {
+    html += `<th>#</th><th>Artist</th><th>Liked</th><th>Total</th><th>%</th>`;
+  }
 
-  // Build rows dynamically
-  const rows = data
-    .map((item) => {
-      if (view === "albums") {
-        return `
-          <tr>
-            <td>${item.rank}</td>
-            <td>${item.album}</td>
-            <td>${item.artist}</td>
-            <td>${item.total}</td>
-          </tr>
-        `;
-      } else {
-        return `
-          <tr>
-            <td>${item.rank}</td>
-            <td>${item.artist}</td>
-            <td>${item.total}</td>
-          </tr>
-        `;
-      }
-    })
-    .join("");
+  html += `</tr></thead><tbody>`;
 
-  // Build full table markup
-  const tableHTML = `
-    <table border="1" cellspacing="0" cellpadding="6" style="width: 100%; border-collapse: collapse;">
-      <thead style="background: #f0f0f0;">
-        <tr>${headers}</tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-  `;
+  for (const row of data) {
+    if (view === "albums") {
+      html += `
+        <tr>
+          <td>${row.rank}</td>
+          <td>${row.album}</td>
+          <td>${row.artist}</td>
+          <td>${row.liked}</td>
+          <td>${row.total}</td>
+          <td>${row.percent}%</td>
+        </tr>`;
+    } else {
+      html += `
+        <tr>
+          <td>${row.rank}</td>
+          <td>${row.artist}</td>
+          <td>${row.liked}</td>
+          <td>${row.total}</td>
+          <td>${row.percent}%</td>
+        </tr>`;
+    }
+  }
 
-  // Inject into DOM
-  resultsDiv.innerHTML = tableHTML;
+  html += `</tbody></table>`;
+  resultsDiv.innerHTML = html;
 }
