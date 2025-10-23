@@ -1,0 +1,41 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spotify Stats — spotipy2</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app" role="application">
+    <header>
+      <div class="brand">🎧 Spotify Stats</div>
+      <div class="muted">spotipy2 • prototype</div>
+    </header>
+
+    <section class="toggle" role="tablist" aria-label="Choose analysis">
+      <h2 id="panel-title" class="muted">Choose an analysis</h2>
+      <p id="panel-desc" class="placeholder">Click one of the buttons above to show <em>ALBUM ANALYSIS</em> or <em>ARTIST ANALYSIS</em> here.</p>
+      <button id="albumBtn" class="btn" role="tab" aria-selected="false" aria-controls="panel" data-view="albums">Analyze Albums</button>
+      <button id="artistBtn" class="btn" role="tab" aria-selected="false" aria-controls="panel" data-view="artists">Analyze Artists</button>
+    </section>
+
+    <section id="panel" class="panel" role="tabpanel" aria-live="polite">
+      <div id="range-buttons" class="range-buttons" hidden>
+        <button class="range-btn" data-range="5">Top 5</button>
+        <button class="range-btn" data-range="10">Top 10</button>
+        <button class="range-btn" data-range="100">Top 100</button>
+        <button class="range-btn" data-range="all">All</button>
+      </div>
+      <div id="results" class="results" hidden></div>
+    </section>
+
+    <footer>
+      <span>UI stub — wired for future API calls</span>
+      <span class="muted">No data loaded yet</span>
+    </footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

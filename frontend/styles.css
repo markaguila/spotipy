@@ -1,0 +1,208 @@
+
+/* styles.css */
+:root {
+  --bg: #0b0f14;
+  --panel: #121922;
+  --accent: #1db954;
+  --text: #e6eef7;
+  --muted: #9db1c7;
+  --ring: rgba(29,185,84,0.35);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: radial-gradient(1200px 800px at 80% -10%, #122232 0%, var(--bg) 40%), var(--bg);
+  color: var(--text);
+  font: 18px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, Apple Color Emoji, Segoe UI Emoji;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.app {
+  width: min(1080px, 95%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%), var(--panel);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  padding: 20px 20px 28px;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.brand { font-weight: 700; letter-spacing: 0.3px; }
+.muted { color: var(--muted); }
+.toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0 12px;
+}
+.btn {
+  --p: 14px;
+  padding: calc(var(--p) - 2px) 18px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring);
+}
+.btn.active {
+  background: linear-gradient(180deg, rgba(29,185,84,0.15), rgba(29,185,84,0.08));
+  border-color: rgba(29,185,84,0.55);
+}
+.panel {
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.25);
+  padding: 18px;
+  min-height: 120px;
+}
+h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  letter-spacing: 0.2px;
+}
+.placeholder {
+  color: var(--muted);
+  font-size: 14px;
+}
+footer {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+@media (max-width: 560px) {
+  .toggle { grid-template-columns: 1fr; }
+}
+
+
+/* Range buttons */
+.range-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.range-btn {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.range-btn:hover {
+  transform: translateY(-1px);
+}
+
+.range-btn.active {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
+
+/* Results table */
+.results {
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.results table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.results th, .results td {
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-align: left;
+}
+
+.results th {
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.results tr:hover td {
+  background: rgba(255,255,255,0.03);
+}
+
+.results td:first-child {
+  color: var(--muted);
+  width: 40px;
+  text-align: right;
+  padding-right: 12px;
+}
+
+/* Fade-in animation for results */
+.results {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.results.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Force visibility for the results area --- */
+.results {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: black !important;
+  background: white !important;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+/* --- Make table legible --- */
+.results table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.results th, .results td {
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.results th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.results tr:nth-child(even) {
+  background: #fafafa;
+}
