@@ -42,15 +42,21 @@ def api_stats():
             .reset_index(name="total")
         )
 
+        # Merge user liked albums with total album data
         result = liked_counts.merge(
             album_totals,
             on=["track_album_id", "track_album_name"],
             how="left"
         )
 
+        # Hardcode: hide singles (albums with only 1 track in the full dataset)
+        result = result[result["total"] > 1]
+
+        # Calculate percentage liked
         result["percent"] = (result["liked"] / result["total"]) * 100
         result["percent"] = result["percent"].clip(upper=100)
 
+        # Sort according to user's selection
         if sort == "percent":
             result = result.sort_values("percent", ascending=False)
         else:
